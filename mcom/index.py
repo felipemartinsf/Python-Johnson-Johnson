@@ -30,7 +30,7 @@ def download_implemented():
    time.sleep(1)
    GenerateFile = driver.find_element(By.XPATH,"//button[text()=' Generate ']")
    GenerateFile.click()
-   time.sleep(1)
+   time.sleep(5)
    try:
         # Verifica se a mensagem de erro está presente na página
         error = WebDriverWait(driver, 10).until(
@@ -122,35 +122,37 @@ def deleteFiles(caminho_da_pasta):
             os.remove(caminho_arquivo)
         except Exception as e:
             print(f'Erro ao remover o arquivo "{nome_arquivo}": {e}')
+
 def putOldFile(file):
-   file_path = r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final'
    df = pd.read_excel(file)
    df['Seção'] = [None] * len(df.index)
    df['Questão'] = [None] * len(df.index)
    df['LE 5'] = [None] * len(df.index)
    df['LE 6'] = [None] * len(df.index)
    df.to_excel(file, index=False)
-   ControlMeasures = df['Control Measures'].astype(str)
-   DegreeAfter = df['DegreeOfPossibleHarmAfter'].astype(str) 
-   AfterValue = df['After Rating Value'].astype(str) 
-   HazardDescription = df['Hazard Description'].astype(str)
-   MachineType = df['MachineType'].astype(str)
-   arquivos = os.listdir(os.path.dirname(file_path))
-   arquivos_xlsx = [arquivo for arquivo in arquivos if arquivo.endswith('.xlsx')]
-   print(arquivos_xlsx)
-   for arquivo in arquivos_xlsx:
-      print(arquivo)
-      de = pd.read_excel(arquivo,sheet_name='Hazard Assessments')
-      ControlMeasuresOld = de['Control Measures'].astype(str)
-      DegreeAfterOld = de['Degree Of Possible Harm After'].astype(str) 
-      AfterValueOld = de['After Rating Value'].astype(str) 
-      HazardDescriptionOld = de['Hazard Description'].astype(str)
-      MachineTypeOld = de['Machine Type'].astype(str)
+   InitialRatingValue = df['Initial Rating Value'].astype(str).tolist()
+   DegreeAfter = df['DegreeOfPossibleHarmAfter'].astype(str).tolist()
+   AfterValue = df['After Rating Value'].astype(str).tolist()
+   InitialRatingValueDescription = df['Initial Rating Value Description'].astype(str).str.upper().tolist()
+   AfterRatingValueDescription = df['After Rating Value Description'].astype(str).str.upper().tolist()
+   MachineType = df['MachineType'].astype(str).tolist()
+   arquivos = os.listdir(os.path.dirname(os.path.abspath(__file__)))
+   arquivos_xlsb = [arquivo for arquivo in arquivos if arquivo.endswith('.xlsb')]
+   de = None
+   for arquivo in arquivos_xlsb:
+      print("arquivo que vai ler:"+arquivo)
+      de = pd.read_excel(arquivo, sheet_name='Hazard Assessments')
+      InitialRatingValueOld = de['Initial Rating Value'].astype(str).tolist()
+      DegreeAfterOld = de['Degree Of Possible Harm After'].astype(str).tolist()
+      AfterValueOld = de['After Rating Value'].astype(str).tolist()
+      InitialRatingValueDescriptionOld = de['Initial Rating Value Description'].astype(str).str.upper().tolist()
+      AfterRatingValueDescriptionOld = de['After Rating Value Description'].astype(str).str.upper().tolist()
+      MachineTypeOld = de['Machine Type'].astype(str).tolist()
       size = de.shape[0]
       size2 = df.shape[0]
       for i in range(size):
          for j in range(size2):
-             if(ControlMeasuresOld[i]==ControlMeasures[j] and DegreeAfterOld[i]==DegreeAfter[j] and AfterValueOld[i]==AfterValue[j] and HazardDescriptionOld[i]==HazardDescription[j] and MachineTypeOld[i]==MachineType[j]):
+             if(DegreeAfterOld[i]==DegreeAfter[j] and InitialRatingValueOld[i]==InitialRatingValue[j] and InitialRatingValueDescriptionOld[i]==InitialRatingValueDescription[j] and AfterRatingValueDescriptionOld[i]==AfterRatingValueDescription[j] and AfterValueOld[i]==AfterValue[j] and MachineTypeOld[i]==MachineType[j]):
                  secao = de.at[i, 'Seção']
                  df.at[j, 'Seção'] = secao
                  questao = de.at[i, 'Questão']
@@ -159,7 +161,8 @@ def putOldFile(file):
                  df.at[j, 'LE 5'] = le5
                  le6 = de.at[i, 'LE 6']
                  df.at[j, 'LE 6'] = le6
-      df.to_excel(file, index=False)          
+      de = None
+   df.to_excel(file, index=False)                  
 
 
 
@@ -168,6 +171,8 @@ def putOldFile(file):
 if os.path.exists(r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final'):
    deleteFiles(r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final')
    os.rmdir(r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final')
+if os.path.exists('planilha_final.xlsx'):
+    os.remove('planilha_final.xlsx')
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
 }
