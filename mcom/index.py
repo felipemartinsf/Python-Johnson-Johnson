@@ -129,13 +129,14 @@ def putOldFile(file):
    df['Questão'] = [None] * len(df.index)
    df['LE 5'] = [None] * len(df.index)
    df['LE 6'] = [None] * len(df.index)
+   df['SIF'] = [None] * len(df.index)
+   df['Grupo / Tecnologia'] = [None] * len(df.index)
    df.to_excel(file, index=False)
    InitialRatingValue = df['Initial Rating Value'].astype(str).tolist()
-   DegreeAfter = df['DegreeOfPossibleHarmAfter'].astype(str).tolist()
-   AfterValue = df['After Rating Value'].astype(str).tolist()
    InitialRatingValueDescription = df['Initial Rating Value Description'].astype(str).str.upper().tolist()
-   AfterRatingValueDescription = df['After Rating Value Description'].astype(str).str.upper().tolist()
    MachineType = df['MachineType'].astype(str).tolist()
+   HazardDescription = df['Hazard Description'].astype(str).tolist()
+   ControlMeasures = df['Control Measures'].astype(str).tolist()
    arquivos = os.listdir(os.path.dirname(os.path.abspath(__file__)))
    arquivos_xlsb = [arquivo for arquivo in arquivos if arquivo.endswith('.xlsb')]
    de = None
@@ -143,16 +144,15 @@ def putOldFile(file):
       print("arquivo que vai ler:"+arquivo)
       de = pd.read_excel(arquivo, sheet_name='Hazard Assessments')
       InitialRatingValueOld = de['Initial Rating Value'].astype(str).tolist()
-      DegreeAfterOld = de['Degree Of Possible Harm After'].astype(str).tolist()
-      AfterValueOld = de['After Rating Value'].astype(str).tolist()
+      HazardDescriptionOld = de['Hazard Description'].astype(str).tolist()
+      ControlMeasuresOld = de['Control Measures'].astype(str).tolist()
       InitialRatingValueDescriptionOld = de['Initial Rating Value Description'].astype(str).str.upper().tolist()
-      AfterRatingValueDescriptionOld = de['After Rating Value Description'].astype(str).str.upper().tolist()
       MachineTypeOld = de['Machine Type'].astype(str).tolist()
       size = de.shape[0]
       size2 = df.shape[0]
       for i in range(size):
          for j in range(size2):
-             if(DegreeAfterOld[i]==DegreeAfter[j] and InitialRatingValueOld[i]==InitialRatingValue[j] and InitialRatingValueDescriptionOld[i]==InitialRatingValueDescription[j] and AfterRatingValueDescriptionOld[i]==AfterRatingValueDescription[j] and AfterValueOld[i]==AfterValue[j] and MachineTypeOld[i]==MachineType[j]):
+             if(HazardDescriptionOld[i]==HazardDescription[j] and ControlMeasuresOld[i]==ControlMeasures[j] and InitialRatingValueOld[i]==InitialRatingValue[j] and InitialRatingValueDescriptionOld[i]==InitialRatingValueDescription[j] and MachineTypeOld[i]==MachineType[j]):
                  secao = de.at[i, 'Seção']
                  df.at[j, 'Seção'] = secao
                  questao = de.at[i, 'Questão']
@@ -161,6 +161,11 @@ def putOldFile(file):
                  df.at[j, 'LE 5'] = le5
                  le6 = de.at[i, 'LE 6']
                  df.at[j, 'LE 6'] = le6
+                 sif = de.at[i,'SIF']
+                 df.at[j,'SIF'] = sif
+                 grupo = de.at[i,'Grupo / Tecnologia']
+                 df.at[j,'Grupo / Tecnologia'] = grupo
+
       de = None
    df.to_excel(file, index=False)                  
 
