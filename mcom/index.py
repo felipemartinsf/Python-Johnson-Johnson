@@ -105,11 +105,9 @@ def statusImplemented(nome_arquivo_planilha):
     df_planilha1['Status'] = ['IMPLEMENTED'] * max_linhas
     df_planilha1.to_excel(nome_arquivo_planilha, index=False)
 
-def mergeAll(idName):
-   file_path = r'C:\Users\name\OneDrive - JNJ\Área de Trabalho\MCOM\final'
-   file_path_end= r'C:\Users\name\OneDrive - JNJ\Área de Trabalho\MCOM'
-   file_path = file_path.replace("name", idName)
-   file_path_end = file_path_end.replace("name", idName)
+def mergeAll():
+   file_path_end= os.path.dirname(os.path.abspath(__file__))
+   file_path = os.path.join(file_path_end, 'final')
    arquivos_excel = [arquivo for arquivo in os.listdir(file_path) if arquivo.endswith('.xlsx')]
    df_final = pd.DataFrame()
    for arquivo in arquivos_excel:
@@ -185,7 +183,7 @@ def get_name():
 
 
 idName = get_name()
-caminho_original = r'C:\Users\name\OneDrive - JNJ\Área de Trabalho\MCOM\final'
+caminho_original = os.path.dirname(os.path.abspath(__file__))
 caminho_modificado = caminho_original.replace("name", idName)
 if os.path.exists(caminho_modificado):
    deleteFiles(caminho_modificado)
@@ -235,7 +233,7 @@ for i in range(len(rows)):
       throwFile(file)
    projects.click()
    time.sleep(3)
-final = mergeAll(idName)
+final = mergeAll()
 putOldFile(final)
 print('tudo foi salvo dentro da planilha: "planilha_final"')
 
