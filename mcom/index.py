@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
+import tkinter as tk
+from tkinter import simpledialog
 import random
 import time
 import shutil
@@ -71,8 +73,9 @@ def download_open():
 
         return 0
 
-def lastFile():
-   pasta = r'C:\Users\FFranci8\Downloads'
+def lastFile(idName):
+   pasta = r'C:\Users\name\Downloads'
+   pasta = pasta.replace("name", idName)
    arquivos = os.listdir(pasta)
    arquivos = [arquivo for arquivo in arquivos if os.path.isfile(os.path.join(pasta, arquivo))]
    caminhos = [os.path.join(pasta, arquivo) for arquivo in arquivos]
@@ -102,9 +105,11 @@ def statusImplemented(nome_arquivo_planilha):
     df_planilha1['Status'] = ['IMPLEMENTED'] * max_linhas
     df_planilha1.to_excel(nome_arquivo_planilha, index=False)
 
-def mergeAll():
-   file_path = r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final'
-   file_path_end= r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM'
+def mergeAll(idName):
+   file_path = r'C:\Users\name\OneDrive - JNJ\Área de Trabalho\MCOM\final'
+   file_path_end= r'C:\Users\name\OneDrive - JNJ\Área de Trabalho\MCOM'
+   file_path = file_path.replace("name", idName)
+   file_path_end = file_path_end.replace("name", idName)
    arquivos_excel = [arquivo for arquivo in os.listdir(file_path) if arquivo.endswith('.xlsx')]
    df_final = pd.DataFrame()
    for arquivo in arquivos_excel:
@@ -125,12 +130,13 @@ def deleteFiles(caminho_da_pasta):
 
 def putOldFile(file):
    df = pd.read_excel(file)
-   df['Seção'] = [None] * len(df.index)
-   df['Questão'] = [None] * len(df.index)
-   df['LE 5'] = [None] * len(df.index)
-   df['LE 6'] = [None] * len(df.index)
-   df['SIF'] = [None] * len(df.index)
-   df['Grupo / Tecnologia'] = [None] * len(df.index)
+   if 'Seção' not in df.columns:
+    df['Seção'] = [None] * len(df.index)
+    df['Questão'] = [None] * len(df.index)
+    df['LE 5'] = [None] * len(df.index)
+    df['LE 6'] = [None] * len(df.index)
+    df['SIF'] = [None] * len(df.index)
+    df['Grupo / Tecnologia'] = [None] * len(df.index)
    df.to_excel(file, index=False)
    InitialRatingValue = df['Initial Rating Value'].astype(str).tolist()
    InitialRatingValueDescription = df['Initial Rating Value Description'].astype(str).str.upper().tolist()
@@ -170,14 +176,20 @@ def putOldFile(file):
    df.to_excel(file, index=False)                  
 
 
+def get_name():
+    root = tk.Tk()
+    root.withdraw()  # Esconder a janela principal
+    
+    name = simpledialog.askstring("JnJ", "Write your JnJ id name like this:'FFranci8' ")
+    return name
 
 
-
-if os.path.exists(r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final'):
-   deleteFiles(r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final')
-   os.rmdir(r'C:\Users\FFranci8\OneDrive - JNJ\Área de Trabalho\MCOM\final')
-if os.path.exists('planilha_final.xlsx'):
-    os.remove('planilha_final.xlsx')
+idName = get_name()
+caminho_original = r'C:\Users\name\OneDrive - JNJ\Área de Trabalho\MCOM\final'
+caminho_modificado = caminho_original.replace("name", idName)
+if os.path.exists(caminho_modificado):
+   deleteFiles(caminho_modificado)
+   os.rmdir(caminho_modificado)
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
 }
@@ -212,18 +224,18 @@ for i in range(len(rows)):
    mistake_open = download_open()
    time.sleep(5)
    if(mistake_open == 0):
-      file = lastFile()
+      file = lastFile(idName)
       statusOpen(file)
       throwFile(file)
    mistake_implemented = download_implemented()
    time.sleep(5)
    if(mistake_implemented == 0):
-      file = lastFile()
+      file = lastFile(idName)
       statusImplemented(file)
       throwFile(file)
    projects.click()
    time.sleep(3)
-final = mergeAll()
+final = mergeAll(idName)
 putOldFile(final)
 print('tudo foi salvo dentro da planilha: "planilha_final"')
 
