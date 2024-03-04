@@ -184,7 +184,7 @@ def get_name():
 
 idName = get_name()
 caminho_original = os.path.dirname(os.path.abspath(__file__))
-caminho_modificado = caminho_original.replace("name", idName)
+caminho_modificado = os.path.join(caminho_original, 'final')
 if os.path.exists(caminho_modificado):
    deleteFiles(caminho_modificado)
    os.rmdir(caminho_modificado)
